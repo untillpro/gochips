@@ -18,13 +18,6 @@ import (
 	"os"
 )
 
-// PanicIfError panics if err is not null
-func PanicIfError(err error) {
-	if nil != err {
-		panic(err)
-	}
-}
-
 // ExitIfError s.e.
 func ExitIfError(err error, args ...interface{}) {
 	if nil != err {
@@ -38,5 +31,12 @@ func ExitIfFalse(cond bool, args ...interface{}) {
 	if !cond {
 		fmt.Fprintln(os.Stderr, args...)
 		os.Exit(1)
+	}
+}
+
+// PanicIfError panics if err is not null
+func PanicIfError(err error) {
+	if nil != err {
+		panic(err)
 	}
 }
