@@ -16,6 +16,10 @@ SH-like piped execution
 		Run(os.Stdout, os.Stdout)
 	assert.Nil(t, err)
 
+
+Links
+- https://stackoverflow.com/questions/25190971/golang-copy-exec-output-to-log
+
 */
 
 package gochips
