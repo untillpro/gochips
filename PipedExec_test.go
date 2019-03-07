@@ -19,6 +19,8 @@ import (
 
 func TestPipedExec_Basics(t *testing.T) {
 
+	IsVerbose = true
+
 	// echo
 	{
 		err := new(PipedExec).
