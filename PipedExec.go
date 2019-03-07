@@ -7,7 +7,9 @@
 
 /*
 
-SH-like piped execution
+Piped execution a la shell
+
+	// ls | grep README.md | echo good
 
 	err := new(PipedExec).
 		Command("ls").WorkingDir("/").
@@ -16,8 +18,11 @@ SH-like piped execution
 		Run(os.Stdout, os.Stdout)
 	assert.Nil(t, err)
 
+Ref. also PipedExec_test.go
+
 
 Links
+
 - https://stackoverflow.com/questions/25190971/golang-copy-exec-output-to-log
 
 */
