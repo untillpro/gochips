@@ -37,7 +37,7 @@ var Verbose func(subj string, args ...interface{})
 var IsVerbose = false
 
 // Output is used by all functions
-var Output func(funcName, s string) error
+var Output func(funcName, s string)
 
 // VerbosePrefix prefixes Verbose output
 var VerbosePrefix = "--- "
@@ -68,7 +68,6 @@ func implVerbose(subj string, args ...interface{}) {
 	}
 }
 
-func implOutput(funcName, s string) error {
-	_, err := fmt.Print(s)
-	return err
+func implOutput(funcName, s string) {
+	fmt.Print(s)
 }
