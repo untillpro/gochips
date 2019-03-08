@@ -29,7 +29,7 @@ var Info func(args ...interface{})
 
 // Verbose If IsVerbose is true  printlns VerbosePrefix + subj + ": " + ...args
 // args are printed in %#v format (json-like) if jsonLike is true, %v othervide
-var Verbose func(subj string, jsonLike bool, args ...interface{})
+var Verbose func(subj string, args ...interface{})
 
 // IsVerbose enables Verbose
 var IsVerbose = false
@@ -51,18 +51,12 @@ func implInfo(args ...interface{}) {
 	fmt.Println(args...)
 }
 
-func implVerbose(subj string, jsonLike bool, args ...interface{}) {
-	var fmtStr string
-	if jsonLike {
-		fmtStr = "%#v, "
-	} else {
-		fmtStr = "%v, "
-	}
+func implVerbose(subj string, args ...interface{}) {
 
 	if IsVerbose {
 		res := VerbosePrefix + subj + ": "
 		for _, arg := range args {
-			res += fmt.Sprintf("%#v, ", arg)
+			res += fmt.Sprintf("%+v, ", arg)
 		}
 		fmt.Println(res)
 	}

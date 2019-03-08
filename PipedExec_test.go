@@ -147,3 +147,10 @@ func TestPipedExec_WrongCommand(t *testing.T) {
 	assert.NotNil(t, err)
 	log.Println(err)
 }
+
+func TestPipedExec_EmptyCommandList(t *testing.T) {
+	err := new(PipedExec).
+		Run(os.Stdout, os.Stdout)
+	assert.NotNil(t, err)
+	log.Println(err)
+}
