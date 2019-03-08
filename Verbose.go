@@ -61,8 +61,11 @@ func implVerbose(subj string, args ...interface{}) {
 
 	if IsVerbose {
 		res := VerbosePrefix + subj + ": "
-		for _, arg := range args {
-			res += fmt.Sprintf("%+v, ", arg)
+		for idx, arg := range args {
+			if idx > 0 {
+				res += ", "
+			}
+			res += fmt.Sprintf("%+v", arg)
 		}
 		Output("Verbose", fmt.Sprintln(res))
 	}
