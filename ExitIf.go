@@ -22,6 +22,7 @@ import (
 func ExitIfError(err error, args ...interface{}) {
 	if nil != err {
 		fmt.Fprintln(os.Stderr, args...)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
