@@ -7,12 +7,12 @@
 
 /*
 
-Piped execution a la shell
+Piped execution a-la shell
 
-	// ls | grep README.md | echo good
+	// echo README.md | grep README.md | sed s/READ/forgive/
 
 	err := new(PipedExec).
-		Command("ls").WorkingDir("/").
+		Command("echo", "README.md").WorkingDir("/").
 		Command("grep", "README.md").
 		Command("echo", "good").
 		Run(os.Stdout, os.Stdout)
