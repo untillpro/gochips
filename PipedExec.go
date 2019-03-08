@@ -7,12 +7,12 @@
 
 /*
 
-Piped execution a la shell
+Piped execution a-la shell
 
-	// ls | grep README.md | echo good
+	// echo README.md | grep README.md | sed s/READ/forgive/
 
 	err := new(PipedExec).
-		Command("ls").WorkingDir("/").
+		Command("echo", "README.md").WorkingDir("/").
 		Command("grep", "README.md").
 		Command("echo", "good").
 		Run(os.Stdout, os.Stdout)
@@ -32,7 +32,6 @@ package gochips
 import (
 	"errors"
 	"io"
-	"log"
 	"os/exec"
 )
 
@@ -93,7 +92,7 @@ func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
 	Self.cmds[lastIdx].cmd.Stdout = out
 
 	for _, cmd := range Self.cmds {
-		log.Println(cmd.cmd.Path, cmd.cmd.Args)
+		Verbose("PipedExec", cmd.cmd.Path, cmd.cmd.Args)
 		err := cmd.cmd.Start()
 		if nil != err {
 			return err

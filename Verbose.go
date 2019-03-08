@@ -13,13 +13,14 @@ Simple logging for CLI utilities using functions:
 - Info
 - Verbose
 
+All functions use Output to actually output the final string
+
 */
 
 package gochips
 
 import (
 	"fmt"
-	"log"
 )
 
 // Doing printlns "$obj..." to stdout
@@ -28,13 +29,15 @@ var Doing func(arg interface{})
 // Info printlns to stdout
 var Info func(args ...interface{})
 
-// Verbose If IsVerbose is true  prints VerbosePrefix + subj + ": " + ...args
-// args are printed in %#v format (json-like)
-// A newline is always appended if the last character is not already a newline https://golang.org/pkg/log/#Logger.Output
+// Verbose If IsVerbose is true  printlns VerbosePrefix + subj + ": " + ...args
+// args are printed in %#v format (json-like) if jsonLike is true, %v othervide
 var Verbose func(subj string, args ...interface{})
 
 // IsVerbose enables Verbose
 var IsVerbose = false
+
+// Output is used by all functions
+var Output func(funcName, s string) error
 
 // VerbosePrefix prefixes Verbose output
 var VerbosePrefix = "--- "
@@ -43,22 +46,29 @@ func init() {
 	Doing = implDoing
 	Info = implInfo
 	Verbose = implVerbose
+	Output = implOutput
 }
 
 func implDoing(arg interface{}) {
-	fmt.Println(fmt.Sprintf("%v...", arg))
+	Output("Doing", fmt.Sprintln(fmt.Sprintf("%v...", arg)))
 }
 
 func implInfo(args ...interface{}) {
-	fmt.Println(args...)
+	Output("Info", fmt.Sprintln(args...))
 }
 
 func implVerbose(subj string, args ...interface{}) {
+
 	if IsVerbose {
 		res := VerbosePrefix + subj + ": "
 		for _, arg := range args {
-			res += fmt.Sprintf("%#v, ", arg)
+			res += fmt.Sprintf("%+v, ", arg)
 		}
-		log.Print(res)
+		Output("Verbose", fmt.Sprintln(res))
 	}
+}
+
+func implOutput(funcName, s string) error {
+	_, err := fmt.Print(s)
+	return err
 }

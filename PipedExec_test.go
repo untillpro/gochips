@@ -19,6 +19,8 @@ import (
 
 func TestPipedExec_Basics(t *testing.T) {
 
+	IsVerbose = true
+
 	// echo
 	{
 		err := new(PipedExec).
@@ -141,6 +143,13 @@ func TestPipedExec_PipeFall(t *testing.T) {
 func TestPipedExec_WrongCommand(t *testing.T) {
 	err := new(PipedExec).
 		Command("qqqqqqjkljlj", "hello").
+		Run(os.Stdout, os.Stdout)
+	assert.NotNil(t, err)
+	log.Println(err)
+}
+
+func TestPipedExec_EmptyCommandList(t *testing.T) {
+	err := new(PipedExec).
 		Run(os.Stdout, os.Stdout)
 	assert.NotNil(t, err)
 	log.Println(err)
