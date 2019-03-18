@@ -18,6 +18,10 @@ import (
 	"os"
 )
 
+func Fatal(args ...interface{}) {
+	ExitIfFalse(false, args...)	
+}
+
 // ExitIfError s.e.
 func ExitIfError(err error, args ...interface{}) {
 	if nil != err {
