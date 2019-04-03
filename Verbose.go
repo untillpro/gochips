@@ -30,7 +30,7 @@ var Doing func(arg interface{})
 var Info func(args ...interface{})
 
 // Verbose If IsVerbose is true  printlns VerbosePrefix + subj + ": " + ...args
-// args are printed in %#v format (json-like) if jsonLike is true, %v othervide
+// args are printed in %#+v format (json-like)
 var Verbose func(subj string, args ...interface{})
 
 // IsVerbose enables Verbose
@@ -65,7 +65,7 @@ func implVerbose(subj string, args ...interface{}) {
 			if idx > 0 {
 				res += ", "
 			}
-			res += fmt.Sprintf("%+v", arg)
+			res += fmt.Sprintf("%#+v", arg)
 		}
 		Output("Verbose", fmt.Sprintln(res))
 	}

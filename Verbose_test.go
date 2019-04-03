@@ -37,7 +37,8 @@ func Test_implVerbose(t *testing.T) {
 	Verbose("Should not see it")
 	IsVerbose = true
 	Verbose("mysubj", "Verbose 1")
-	Verbose("mysubj", "Verbose 1.1", "Verbose 1.2")
+	Verbose("two values", "Verbose 1.1", "Verbose 1.2")
+	Verbose("slice", []string{"slice 1", "slice 2"})
 
 	m := make(map[string]string)
 	m["key1"] = "value1"
