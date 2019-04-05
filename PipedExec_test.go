@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -174,4 +175,47 @@ func TestPipedExec_KillProcessUsingFirst(t *testing.T) {
 	fmt.Println("Running...")
 	err := pe.Run(os.Stdout, os.Stderr)
 	fmt.Println("err=", err)
+}
+
+func TestPipedExec_RunToStrings(t *testing.T) {
+
+	{
+		stdouts, stderrs, err := new(PipedExec).
+			Command("sh", "-c", "echo 11").
+			RunToStrings()
+		assert.Nil(t, err)
+		assert.Equal(t, "11", strings.TrimSpace(stdouts))
+		assert.Equal(t, "", stderrs)
+	}
+
+	// 1 > &2
+	{
+		stdouts, stderrs, err := new(PipedExec).
+			Command("sh", "-c", "echo 11 1>&2").
+			RunToStrings()
+		assert.Nil(t, err)
+		assert.Equal(t, "11", strings.TrimSpace(stderrs))
+		assert.Equal(t, "", stdouts)
+	}
+
+	//stdout and stderr
+	{
+		stdouts, stderrs, err := new(PipedExec).
+			Command("sh", "-c", "echo err 1>&2; echo std").
+			RunToStrings()
+		assert.Nil(t, err)
+		assert.Equal(t, "std", strings.TrimSpace(stdouts))
+		assert.Equal(t, "err", strings.TrimSpace(stderrs))
+	}
+
+	//Wrong command
+	{
+		stdouts, stderrs, err := new(PipedExec).
+			Command("itmustbeawrongcommandPipedExecRunToStrings").
+			RunToStrings()
+		assert.NotNil(t, err)
+		assert.Equal(t, "", stdouts)
+		assert.Equal(t, "", stderrs)
+	}
+
 }

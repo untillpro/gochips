@@ -30,10 +30,12 @@ Links
 package gochips
 
 import (
+	"bytes"
 	"errors"
 	"io"
 	"os"
 	"os/exec"
+	"sync"
 )
 
 // https://github.com/b4b4r07/go-pipe/blob/master/README.md
@@ -86,10 +88,21 @@ func (Self *PipedExec) WorkingDir(wd string) *PipedExec {
 	return Self
 }
 
-// Run starts the pipe
-func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
+// Wait until all cmds finish
+func (Self *PipedExec) Wait() error {
 	for _, cmd := range Self.cmds {
-		if cmd.stderrRedirection == StderrRedirectNone {
+		err := cmd.cmd.Wait()
+		if nil != err {
+			return err
+		}
+	}
+	return nil
+}
+
+// Start all cmds
+func (Self *PipedExec) Start(out io.Writer, err io.Writer) error {
+	for _, cmd := range Self.cmds {
+		if cmd.stderrRedirection == StderrRedirectNone && nil != err {
 			cmd.cmd.Stderr = err
 		}
 	}
@@ -97,7 +110,9 @@ func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
 	if lastIdx < 0 {
 		return errors.New("Empty command list")
 	}
-	Self.cmds[lastIdx].cmd.Stdout = out
+	if nil != out {
+		Self.cmds[lastIdx].cmd.Stdout = out
+	}
 
 	for _, cmd := range Self.cmds {
 		Verbose("PipedExec", cmd.cmd.Path, cmd.cmd.Args)
@@ -106,12 +121,58 @@ func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
 			return err
 		}
 	}
-
-	for _, cmd := range Self.cmds {
-		err := cmd.cmd.Wait()
-		if nil != err {
-			return err
-		}
-	}
 	return nil
+}
+
+// Run starts the pipe
+func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
+	e := Self.Start(out, err)
+	if nil != e {
+		return e
+	}
+	return Self.Wait()
+}
+
+// RunToStrings runs the pipe and saves outputs to strings
+func (Self *PipedExec) RunToStrings() (stdout string, stderr string, err error) {
+	// _, stdoutw := io.Pipe()
+	// _, stderrw := io.Pipe()
+
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+
+	lastCmd := Self.cmds[len(Self.cmds)-1]
+	stdoutPipe, err := lastCmd.cmd.StdoutPipe()
+	if nil != err {
+		return "", "", err
+	}
+	stderrPipe, err := lastCmd.cmd.StderrPipe()
+	if nil != err {
+		return "", "", err
+	}
+
+	err = Self.Start(nil, nil)
+	if nil != err {
+		return "", "", err
+	}
+
+	go func() {
+		defer wg.Done()
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(stdoutPipe)
+		stdout = buf.String()
+	}()
+
+	go func() {
+		defer wg.Done()
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(stderrPipe)
+		stderr = buf.String()
+	}()
+
+	wg.Wait()
+
+	return stdout, stderr, nil
+
 }
