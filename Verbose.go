@@ -15,12 +15,17 @@ Simple logging for CLI utilities using functions:
 
 All functions use Output to actually output the final string
 
+- VerboseWriters() are intended to be used with PipedExec.Run()
+
 */
 
 package gochips
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 )
 
 // Doing printlns "$obj..." to stdout
@@ -42,11 +47,15 @@ var Output func(funcName, s string)
 // VerbosePrefix prefixes Verbose output
 var VerbosePrefix = "--- "
 
+// VerboseWriters returns (os.Stdout, os.Stderr) if IsVerbose, (ioutil.Discard, os.Stderr) otherwise
+var VerboseWriters func() (out io.Writer, err io.Writer)
+
 func init() {
 	Doing = implDoing
 	Info = implInfo
 	Verbose = implVerbose
 	Output = implOutput
+	VerboseWriters = implVerboseWriters
 }
 
 func implDoing(arg interface{}) {
@@ -73,4 +82,11 @@ func implVerbose(subj string, args ...interface{}) {
 
 func implOutput(funcName, s string) {
 	fmt.Print(s)
+}
+
+func implVerboseWriters() (out io.Writer, err io.Writer) {
+	if IsVerbose {
+		return os.Stdout, os.Stderr
+	}
+	return ioutil.Discard, os.Stderr
 }

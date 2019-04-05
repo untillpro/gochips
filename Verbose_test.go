@@ -17,7 +17,32 @@ Simple logging for CLI utilities
 
 package gochips
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func Test_VerboseWriters(t *testing.T) {
+
+	IsVerbose = false
+
+	err := new(PipedExec).
+		Command("echo", "!!! Should not see it").
+		Run(VerboseWriters())
+	assert.Nil(t, err)
+
+	err = new(PipedExec).
+		Command("sh", "-c", "echo '***' Redirect, should see 1>&2").
+		Run(VerboseWriters())
+	assert.Nil(t, err)
+
+	IsVerbose = true
+	err = new(PipedExec).
+		Command("echo", "*** Verbose Should see it").
+		Run(VerboseWriters())
+	assert.Nil(t, err)
+}
 
 func Test_implDoing(t *testing.T) {
 	Doing("Doing")
@@ -33,7 +58,10 @@ type myPoint struct {
 	y int
 }
 
-func Test_implVerbose(t *testing.T) {
+func Test_Verbose(t *testing.T) {
+
+	IsVerbose = false
+
 	Verbose("Should not see it")
 	IsVerbose = true
 	Verbose("mysubj", "Verbose 1")

@@ -8,11 +8,13 @@
 package gochips
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -153,4 +155,23 @@ func TestPipedExec_EmptyCommandList(t *testing.T) {
 		Run(os.Stdout, os.Stdout)
 	assert.NotNil(t, err)
 	log.Println(err)
+}
+
+func TestPipedExec_KillProcessUsingFirst(t *testing.T) {
+	pe := new(PipedExec)
+	pe.Command("sleep", "10")
+	cmd := pe.GetCmd(0)
+
+	go func() {
+		defer fmt.Println("Bye")
+		select {
+		case <-time.After(3 * time.Second):
+			fmt.Println("Killing process...")
+			cmd.Process.Kill()
+		}
+	}()
+
+	fmt.Println("Running...")
+	err := pe.Run(os.Stdout, os.Stderr)
+	fmt.Println("err=", err)
 }

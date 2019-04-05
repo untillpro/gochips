@@ -32,6 +32,7 @@ package gochips
 import (
 	"errors"
 	"io"
+	"os"
 	"os/exec"
 )
 
@@ -61,9 +62,16 @@ func (Self *PipedExec) command(name string, stderrRedirection int, args ...strin
 		var err error
 		cmd.Stdin, err = Self.cmds[lastIdx].cmd.StdoutPipe()
 		PanicIfError(err)
+	} else {
+		cmd.Stdin = os.Stdin
 	}
 	Self.cmds = append(Self.cmds, &pipedCmd{stderrRedirection, cmd})
 	return Self
+}
+
+// GetCmd returns cmd with given index
+func (Self *PipedExec) GetCmd(idx int) *exec.Cmd {
+	return Self.cmds[idx].cmd
 }
 
 // Command adds a command to a pipe
@@ -105,7 +113,5 @@ func (Self *PipedExec) Run(out io.Writer, err io.Writer) error {
 			return err
 		}
 	}
-
 	return nil
-
 }

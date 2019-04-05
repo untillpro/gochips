@@ -18,8 +18,9 @@ import (
 	"os"
 )
 
+// Fatal exists with given parameters
 func Fatal(args ...interface{}) {
-	ExitIfFalse(false, args...)	
+	ExitIfFalse(false, args...)
 }
 
 // ExitIfError s.e.
