@@ -6,21 +6,6 @@
  */
 
 /*
-
-Piped execution a-la shell
-
-	// echo README.md | grep README.md | sed s/READ/forgive/
-
-	err := new(PipedExec).
-		Command("echo", "README.md").WorkingDir("/").
-		Command("grep", "README.md").
-		Command("echo", "good").
-		Run(os.Stdout, os.Stdout)
-	assert.Nil(t, err)
-
-Ref. also PipedExec_test.go
-
-
 Links
 
 - https://stackoverflow.com/questions/25190971/golang-copy-exec-output-to-log

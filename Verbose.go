@@ -9,6 +9,7 @@
 
 Simple logging for CLI utilities using functions:
 
+- Error
 - Doing
 - Info
 - Verbose
@@ -34,6 +35,9 @@ var Doing func(arg interface{})
 // Info printlns to stdout
 var Info func(args ...interface{})
 
+// Error printlns to stdout
+var Error func(args ...interface{})
+
 // Verbose If IsVerbose is true  printlns VerbosePrefix + subj + ": " + ...args
 // args are printed in %#+v format (json-like)
 var Verbose func(subj string, args ...interface{})
@@ -47,6 +51,9 @@ var Output func(funcName, s string)
 // VerbosePrefix prefixes Verbose output
 var VerbosePrefix = "--- "
 
+// ErrorPrefix prefixes Verbose output
+var ErrorPrefix = "*** "
+
 // VerboseWriters returns (os.Stdout, os.Stderr) if IsVerbose, (ioutil.Discard, os.Stderr) otherwise
 var VerboseWriters func() (out io.Writer, err io.Writer)
 
@@ -54,6 +61,7 @@ func init() {
 	Doing = implDoing
 	Info = implInfo
 	Verbose = implVerbose
+	Error = implError
 	Output = implOutput
 	VerboseWriters = implVerboseWriters
 }
@@ -64,6 +72,10 @@ func implDoing(arg interface{}) {
 
 func implInfo(args ...interface{}) {
 	Output("Info", fmt.Sprintln(args...))
+}
+
+func implError(args ...interface{}) {
+	Output("Error", ErrorPrefix+fmt.Sprintln(args...))
 }
 
 func implVerbose(subj string, args ...interface{}) {

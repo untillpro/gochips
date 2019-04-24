@@ -44,11 +44,15 @@ func Test_VerboseWriters(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func Test_implDoing(t *testing.T) {
+func Test_Error(t *testing.T) {
+	Error("This is an error", "err arg1", "err arg2")
+}
+
+func Test_Doing(t *testing.T) {
 	Doing("Doing")
 }
 
-func Test_implInfo(t *testing.T) {
+func Test_Info(t *testing.T) {
 	Info("Info1")
 	Info("Info1.1", "Info1.2")
 }
