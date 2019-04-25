@@ -16,21 +16,11 @@ package gochips
 import (
 	"fmt"
 	"os"
-	"testing"
 )
 
 // Fatal exists with given parameters
 func Fatal(args ...interface{}) {
 	ExitIfFalse(false, args...)
-}
-
-// FatalIfError calls t.Fatal(args, err) if err is not nil
-func FatalIfError(t *testing.T, err error, args ...interface{}) {
-	if err == nil {
-		return
-	}
-	args = append(args, err)
-	t.Fatal(args...)
 }
 
 // ExitIfError s.e.
