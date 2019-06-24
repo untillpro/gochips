@@ -47,7 +47,7 @@ func TestPipedExec_Basics(t *testing.T) {
 			Command("echo", "hi").
 			Command("grep", "hello").
 			Run(os.Stdout, os.Stdout)
-		assert.NotNil(t, err)
+		assert.NotNil(t, err, err)
 	}
 
 	// echo hi | grep hi | echo good
@@ -166,7 +166,7 @@ func TestPipedExec_KillProcessUsingFirst(t *testing.T) {
 	go func() {
 		defer fmt.Println("Bye")
 		select {
-		case <-time.After(3 * time.Second):
+		case <-time.After(2 * time.Second):
 			fmt.Println("Killing process...")
 			cmd.Process.Kill()
 		}
@@ -175,6 +175,7 @@ func TestPipedExec_KillProcessUsingFirst(t *testing.T) {
 	fmt.Println("Running...")
 	err := pe.Run(os.Stdout, os.Stderr)
 	fmt.Println("err=", err)
+	assert.NotNil(t, err)
 }
 
 func TestPipedExec_RunToStrings(t *testing.T) {

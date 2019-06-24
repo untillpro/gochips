@@ -75,13 +75,14 @@ func (Self *PipedExec) WorkingDir(wd string) *PipedExec {
 
 // Wait until all cmds finish
 func (Self *PipedExec) Wait() error {
+	var firstErr error
 	for _, cmd := range Self.cmds {
 		err := cmd.cmd.Wait()
-		if nil != err {
-			return err
+		if nil != err && firstErr == nil {
+			firstErr = err
 		}
 	}
-	return nil
+	return firstErr
 }
 
 // Start all cmds
@@ -158,6 +159,6 @@ func (Self *PipedExec) RunToStrings() (stdout string, stderr string, err error) 
 
 	wg.Wait()
 
-	return stdout, stderr, nil
+	return stdout, stderr, Self.Wait()
 
 }
