@@ -22,13 +22,11 @@ func (e Errors) Error() string {
 }
 
 // Add appends new error using provided message
-func (e Errors) Add(message string) Errors {
-	e = append(e, errors.New(message))
-	return e
+func (e *Errors) Add(message string) {
+	*e = append(*e, errors.New(message))
 }
 
 // AddE appends the provided error
-func (e Errors) AddE(err error) Errors {
-	e = append(e, err)
-	return e
+func (e *Errors) AddE(err error) {
+	*e = append(*e, err)
 }
