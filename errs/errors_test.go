@@ -13,6 +13,10 @@ func TestErrors(t *testing.T) {
 	println(cap(errs))
 	require.Nil(t, errs)
 
+	var newErr error
+	errs.AddE(newErr)
+	require.Nil(t, errs)
+
 	errs.Add("error1")
 	fmt.Printf("%p\n", &errs)
 	require.Equal(t, "error1", errs.Error())
