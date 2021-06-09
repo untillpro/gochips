@@ -11,6 +11,10 @@ func TestErrors(t *testing.T) {
 	var errs Errors
 	require.Nil(t, errs)
 
+	var newErr error
+	errs.AddE(newErr)
+	require.Nil(t, errs)
+
 	errs.Add("error1")
 	require.Equal(t, "error1", errs.Error())
 
